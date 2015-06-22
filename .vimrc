@@ -1,3 +1,4 @@
+
 " An example for a vimrc file.
 "
 " Maintainer:	Bram Moolenaar <Bram@vim.org>
@@ -17,26 +18,31 @@ endif
 " Use Vim settings, rather than Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 set nocompatible
+filetype off                  " required
 
-" set vbundle plugin
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
 
-filetype off                  " required!
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+Plugin 'vim-scripts/a.vim'
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-
-" let Vundle manage Vundle
-" required! 
-Bundle 'gmarik/vundle'
-
-" My bundles here:
-"
-" original repos on GitHub
-Bundle 'tpope/vim-fugitive'
-Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle 'tpope/vim-rails.git'
-Bundle 'tpope/vim-surround'
-"Bundle 'Lokaltog/vim-powerline'
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+Plugin 'tpope/vim-fugitive'
+" plugin from http://vim-scripts.org/vim/scripts.html
+Plugin 'L9'
+" Git plugin not hosted on GitHub
+" Plugin 'git://git.wincent.com/command-t.git'
+" git repos on your local machine (i.e. when working on your own plugin)
+" Plugin 'file:///home/gmarik/path/to/plugin'
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'Lokaltog/powerline', {'rtp':  'powerline/bindings/vim'}
 Bundle 'Lokaltog/vim-easymotion'
 Bundle 'scrooloose/nerdtree'
@@ -45,31 +51,26 @@ Bundle 'Valloric/YouCompleteMe'
 Bundle 'vim-scripts/taglist.vim'
 Bundle 'majutsushi/tagbar'
 Bundle 'itchyny/calendar.vim'
-"Bundle 'vim-scripts/v2ex'
+Bundle 'fatih/vim-go'
 
-" vim-scripts repos
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-Bundle 'OmniCppComplete'
-Bundle 'snipMate'
 
-" non-GitHub repos
-Bundle 'git://git.wincent.com/command-t.git'
-" Git repos on your local machine (i.e. when working on your own plugin)
-"Bundle 'file:///Users/gmarik/path/to/plugin'
-" ...
-
-filetype plugin indent on     " required!
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
 "
 " Brief help
-" :BundleList          - list configured bundles
-" :BundleInstall(!)    - install (update) bundles
-" :BundleSearch(!) foo - search (or refresh cache first) for foo
-" :BundleClean(!)      - confirm (or auto-approve) removal of unused bundles
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just
+" :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to
+" auto-approve removal
 "
 " see :h vundle for more details or wiki for FAQ
-" NOTE: comments after Bundle commands are not allowed.
-
+" Put your non-Plugin stuff after this line
+" allow backspacing over everything in insert mode
 
 " No tabs in the source file.
 " All tab characters are 4 space characters.
@@ -77,57 +78,17 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
-" Bundle 'itchyny/calendar.vim'
-" Google Calender
-let g:calendar_google_calendar = 1
-let g:calendar_google_task = 1
-
 " Show line number
 set number
 language en_US.UTF-8
+
 "powerline{
-"set guifont=Anonymice\ Powerline
+""set guifont=Anonymice\ Powerline
 set encoding=utf-8 " Necessary to show Unicode glyphs
 set laststatus=2
 set t_Co=256
 let g:Powerline_symbols = 'fancy'
 "}
-
-
-function! AutoPair(open, close)
-	let line = getline('.')
-	if col('.') > strlen(line) || line[col('.') - 1] == ' '
-		return a:open.a:close."\<ESC>i"
-	else
-		return a:open
-	endif
-endf
-
-function! ClosePair(char)
-	if getline('.')[col('.') - 1] == a:char
-		return "\<Right>"
-	else
-		return a:char
-	endif
-endf
-
-inoremap ( <c-r>=AutoPair('(', ')')<CR>
-inoremap ) <c-r>=ClosePair(')')<CR>
-
-" Show funtion name
-fun! ShowFuncName()
-    let lnum = line(".")
-    let col = col(".")
-    echohl ModeMsg
-    echo getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bW'))
-    echohl None
-    call search("\\%" . lnum . "l" . "\\%" . col . "c")
-endfun
-map ,f :call ShowFuncName() <CR>
-
-" Folding c function
-" autocmd FileType c setlocal foldmethod=syntax
-
 
 "   Edit another file in the same directory as the current file
 "   uses expression to extract path from current file's path
@@ -136,7 +97,7 @@ if has("unix")
     map ,e :e <C-R>=expand("%:p:h") . "/" <CR>
 else
     map ,e :e <C-R>=expand("%:p:h") . "\" <CR>
-endif
+    endif
 
 " esc esc to save file
 map <Esc><Esc> :w<CR>
@@ -152,6 +113,7 @@ map <C-l> <C-w>l
 
 " map leader
 let mapleader = ","
+
 
 command! Q  quit  
 command! W  write 
@@ -172,14 +134,14 @@ let g:snips_trigger_key = '<F2>'
 set backspace=indent,eol,start
 
 if has("vms")
-  set nobackup		" do not keep a backup file, use versions instead
+  set nobackup        " do not keep a backup file, use versions instead
 else
-  set backup		" keep a backup file
+  set backup        " keep a backup file
 endif
-set history=5000		" keep 50 lines of command line history
-set ruler		" show the cursor position all the time
-set showcmd		" display incomplete commands
-set incsearch		" do incremental searching
+set history=5000      " keep 50 lines of command line history
+set ruler     " show the cursor position all the time
+set showcmd       " display incomplete commands
+set incsearch     " do incremental searching
 
 " For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
 " let &guioptions = substitute(&guioptions, "t", "", "g")
@@ -206,34 +168,34 @@ endif
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
-  " Enable file type detection.
-  " Use the default filetype settings, so that mail gets 'tw' set to 72,
-  " 'cindent' is on in C files, etc.
-  " Also load indent files, to automatically do language-dependent indenting.
-  filetype plugin indent on
+    " Enable file type detection.
+    " Use the default filetype settings, so that mail gets 'tw' set to 72,
+    " 'cindent' is on in C files, etc.
+    " Also load indent files, to automatically do language-dependent indenting.
+    filetype plugin indent on
 
-  " Put these in an autocmd group, so that we can delete them easily.
-  augroup vimrcEx
-  au!
+    " Put these in an autocmd group, so that we can delete them easily.
+    augroup vimrcEx
+    au!
 
-  " For all text files set 'textwidth' to 78 characters.
-  autocmd FileType text setlocal textwidth=78
+    " For all text files set 'textwidth' to 78 characters.
+    autocmd FileType text setlocal textwidth=78
 
-  " When editing a file, always jump to the last known cursor position.
-  " Don't do it when the position is invalid or when inside an event handler
-  " (happens when dropping a file on gvim).
-  " Also don't do it when the mark is in the first line, that is the default
-  " position when opening a file.
-  autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line("$") |
-    \   exe "normal! g`\"" |
-    \ endif
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    " Also don't do it when the mark is in the first line, that is the default
+    " position when opening a file.
+    autocmd BufReadPost *
+                \ if line("'\"") > 1 && line("'\"") <= line("$") |
+                \   exe "normal! g`\"" |
+                \ endif
 
-  augroup END
+    augroup END
 
 else
 
-  set autoindent		" always set autoindenting on
+    set autoindent      " always set autoindenting on
 
 endif " has("autocmd")
 
@@ -242,5 +204,5 @@ endif " has("autocmd")
 " Only define it when not defined already.
 if !exists(":DiffOrig")
   command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-		  \ | wincmd p | diffthis
+            \ | wincmd p | diffthis
 endif
